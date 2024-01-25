@@ -1,0 +1,326 @@
+{% extends 'admin/master.html' %}
+{% block main_content %}
+    <div id="app" class="container-fluid">
+        <div v-if="successMessage" class="alert alert-success" role="alert">
+            [[ successMessage ]]
+        </div>
+        <div v-if="deleteSuccessMessage" class="alert alert-success" role="alert">
+            [[ deleteSuccessMessage ]]
+        </div>
+        <div v-if="editSuccessMessage" class="alert alert-success" role="alert">
+            [[ editSuccessMessage ]]
+        </div>
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card card-primary card-outline">
+                    <div class="card-header">
+                        <div class="row">
+                            <div class="col-6">
+                                <h5 class="m-0">
+                                    <i class="fas fa-people-carry"></i>
+                                    Customer list
+                                </h5>
+                            </div>
+                            <div class="col-6">
+                                <button type="button" class="btn btn-outline-success float-right" data-toggle="modal"
+                                        data-target="#addcust">
+                                    <i class="fas fa-plus-circle"></i>
+                                    Add Customer
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-sm table-borderless table-striped">
+                                <thead>
+                                <tr class="bg-primary">
+                                    <th>Id</th>
+                                    <th>Name</th>
+                                    <th>Image</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr>
+                                    <td v-if="this.customer_list.length == 0" colspan="7" class="text-center">
+                                        <span style="color: #cccc">no record...</span>
+                                    </td>
+                                </tr>
+                                <template v-if="this.customer_list.length> 0">
+                                    <tr v-for="(item,index) in this.customer_list">
+                                        <td>[[ index + 1]]</td>
+                                        <td>[[ item.name ]]</td>
+                                        <td>[[ item.image]]</td>
+                                        <td>[[ item.status ]]</td>
+                                        <td class="d-flex" style="gap:10px">
+
+                                            <button type="button"
+                                                    @click="openEditModal(item.id, item.name, item.image, item.status)"
+                                                    class="btn btn-outline-secondary"
+                                                    data-toggle="modal" data-target="#editcust">
+                                                Edit
+                                                <i class="far fa-edit"></i>
+                                            </button>
+
+
+                                            <button type="button" @click="getID(item.id)"
+                                                    class="btn btn-outline-danger "
+                                                    data-toggle="modal"
+                                                    data-target="#deletecust">
+                                                Delete
+                                                <i class="fas fa-trash-alt"></i>
+                                            </button>
+
+                                        </td>
+                                    </tr>
+                                </template>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal Add -->
+        <div class="modal fade" id="addcust" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+             aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Add Customer</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <form method="POST" @submit="addCustomer">
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <label for="name">Name <span class="text-danger">*</span></label>
+                                <input type="text" v-model="name" name="name" class="form-control" id="name"
+                                       placeholder="Enter your name" required>
+                                <label for="image">Image Link<span class="text-danger">*</span></label>
+                                <input type="text" v-model="image" name="image" class="form-control" id="image"
+                                       placeholder="Enter your image link" required>
+                                <label for="image">Status<span class="text-danger">*</span></label>
+                                <input type="text" v-model="status" name="status" class="form-control" id="status"
+                                       placeholder="Enter your status" required>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                <button type="submit" class="btn btn-primary"
+                                >Add Customer
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+
+
+                </div>
+            </div>
+        </div>
+        <!-- End -->
+        <!-- Modal delete -->
+        <div class="modal fade" id="deletecust" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+             aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Delete Customer</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Are you sure you want to Delete?</p>
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary" @click="deleteCustomer"
+                        >Delete
+                        </button>
+                    </div>
+
+
+                </div>
+            </div>
+        </div>
+        <!-- End -->
+        <!-- Modal Edit -->
+        <div class="modal fade" id="editcust" tabindex="-1" role="dialog" aria-labelledby="editCustomerLabel"
+             aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="editCustomerLabel">Edit Customer</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <form @submit.prevent="editCustomer">
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <label for="new_name">Name <span class="text-danger">*</span></label>
+                                <input type="text" v-model="new_name" name="new_name" class="form-control" id="new_name"
+                                       placeholder="Enter name" required>
+                                <!-- Add other form fields as needed -->
+                                <label for="new_image">Image link<span class="text-danger">*</span></label>
+                                <input type="text" v-model="new_image" name="new_image" class="form-control"
+                                       id="new_image"
+                                       placeholder="Enter image link" required>
+                                <label for="new_status">Status<span class="text-danger">*</span></label>
+                                <input type="text" v-model="new_status" name="new_status" class="form-control"
+                                       id="new_status"
+                                       placeholder="Enter status" required>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary">Save Changes</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <!-- End -->
+    </div>
+
+    <script>
+        var vue_obj = new Vue({
+            el: '#app',
+            delimiters: ['[[', ']]'],
+            data: {
+                customer_list: [],
+                name: "",
+                image: "",
+                status: "",
+                successMessage: '',
+                deleteSuccessMessage: '',
+                editSuccessMessage: '',
+                customerId: 0,
+                new_name: "",
+                new_image: "",
+                new_status: "",
+
+            },
+            methods: {
+                allData() {
+                    axios.get('http://127.0.0.1:5000/api/customer').then(response => {
+                        this.customer_list = response.data;
+                    });
+                },
+                clearSuccessMessage() {
+                    this.successMessage = '';
+                    this.deleteSuccessMessage = '';
+                    this.editSuccessMessage = '';
+                },
+                addCustomer(e) {
+                    e.preventDefault();
+
+                    axios.post('http://127.0.0.1:5000/api/customer', {
+                        name: this.name,
+                        image: this.image,
+                        status: this.status
+                    })
+                        .then(response => {
+                            if (response.data.id) {
+                                // Assume 'id' is present in the response to indicate a successful addition
+                                $('#addcust').modal('hide');
+                                this.customer_list.push(response.data);  // Assuming the response contains the added customer data
+                                this.successMessage = 'Customer added successfully!';
+                                // Clear the form fields
+                                this.name = '';
+                                this.image = '';
+                                this.status = '';
+                                this.allData();
+
+                                // Clear success message after 2 seconds
+                                setTimeout(() => {
+                                    this.clearSuccessMessage();
+                                }, 2000);
+                            } else {
+                                alert('Failed to add customer: ' + response.data.error);
+                            }
+                        })
+                        .catch(error => {
+                            alert('An error occurred while adding the customer.');
+                            console.error(error);
+                        });
+                },
+                getID(customerId) {
+                    this.customerId = customerId;  // Fix the variable name to match the parameter
+                },
+                async deleteCustomer() {
+                    try {
+                        const response = await axios.delete(`http://127.0.0.1:5000/api/customer/${this.customerId}`);
+
+                        if (response.data.success) {
+                            $('#deletecust').modal('hide');
+                            this.allData();
+                            this.deleteSuccessMessage = 'Customer deleted successfully';
+                            setTimeout(() => {
+                                this.clearSuccessMessage();
+                            }, 2000);
+                        } else {
+                            console.error('Error deleting customer:', response.data.message);
+                        }
+                    } catch (error) {
+                        console.error('Unexpected error:', error);
+                    }
+                },
+
+                openEditModal(id, name, image, status) {
+                    this.customerId = id;
+                    this.new_name = name;
+                    this.new_image = image;
+                    this.new_status = status;
+                    // Add other fields as needed
+                    // Show the edit modal
+                    $('#editcust').modal('show');
+                },
+
+                // Method to handle editing form submission
+                editCustomer() {
+                    axios.put(`http://127.0.0.1:5000/api/customer/${this.customerId}`, {
+                        name: this.new_name,
+                        image: this.new_image,
+                        status: this.new_status,
+                        // Add other fields as needed
+                    })
+                        .then(response => {
+                            // Handle success, for example, show a success message
+                            this.editSuccessMessage = 'Customer edited successfully';
+
+                            // Clear the form fields
+                            this.new_name = '';
+                            this.new_image = '';
+                            this.new_status = '';
+                            // Clear other fields as needed
+
+                            // Close the edit modal
+                            $('#editcust').modal('hide');
+                            setTimeout(() => {
+                                this.clearSuccessMessage();
+                            }, 2000);
+
+                            // Fetch updated customer list
+                            this.allData();
+                        })
+                        .catch(error => {
+                            // Handle error, for example, show an error message
+                            console.error('Error editing customer:', error);
+                        });
+                },
+            },
+            created() {
+                // Your created lifecycle hook code
+            },
+            mounted() {
+                this.allData();
+            }
+        });
+    </script>
+{% endblock %}

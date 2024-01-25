@@ -1,0 +1,295 @@
+{% extends'admin/master.html' %}
+{% block main_content %}
+    <div id="app" class="container-fluid">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card card-primary card-outline">
+                    <div class="card-header">
+                        <div class="row">
+                            <div class="col-6">
+                                <h5 class="m-0"><i class="nav-icon fas fa-user-graduate"></i> Student list</h5>
+                            </div>
+                            <div class="col-6">
+                                <button type="button" class="btn btn-outline-success float-right" data-toggle="modal"
+                                        data-target="#addstu">
+                                    Add Student
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <table class="table table-borderless  table-sm table-striped">
+                            <thead>
+                            <tr class="bg-primary">
+                                <th>ID</th>
+                                <th>Firstname</th>
+                                <th>Lastname</th>
+                                <th>Gender</th>
+                                <th>Age</th>
+                                <th>Address</th>
+                                <th>BOD</th>
+                                <th>POD</th>
+                                <th>Action</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td>1</td>
+                                <td>panha</td>
+                                <td>tit</td>
+                                <td>M</td>
+                                <td>12</td>
+                                <td>PP</td>
+                                <td>2002/12/09</td>
+                                <td>PP</td>
+                                <td class="d-flex" style="gap:10px">
+                                    <button type="button"
+                                            class="btn btn-outline-secondary"
+                                            data-toggle="modal"
+                                            data-target="#editstu">
+                                        Edit
+                                        <i class="far fa-edit"></i>
+                                    </button>
+                                    <button type="button"
+                                            class="btn btn-outline-danger "
+                                            data-toggle="modal"
+                                            data-target="#deletestu">
+                                        Delete
+                                        <i class="fas fa-trash-alt"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <!-- /.col-md-6 -->
+        </div>
+        <!-- Modal Add -->
+        <div class="modal fade" id="addstu" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+             aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Add Student</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <form method="POST" @submit="addStudent">
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <label for="firstname">Firstname <span class="text-danger">*</span></label>
+                                <input
+                                        required
+                                        type="text"
+                                        v-model="firstname"
+                                        class="form-control"
+                                        id="firstname"
+                                        name="firstname"
+                                        placeholder="Enter your firstname"
+                                >
+                            </div>
+                            <div class="form-group">
+                                <label for="lastname">Lastname <span class="text-danger">*</span></label>
+                                <input
+                                        required
+                                        type="text"
+                                        v-model="lastname"
+                                        class="form-control"
+                                        id="lastname"
+                                        name="lastname"
+                                        placeholder="Enter your Lastname"
+                                >
+                            </div>
+                            <div class="form-group">
+                                <label for="gender">Gender <span class="text-danger">*</span></label>
+                                <select
+                                        required
+                                        v-model="gender"
+                                        class="form-control"
+                                        id="gender"
+                                        name="gender"
+                                >
+                                    <option value="male">Male</option>
+                                    <option value="female">Female</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="age">Age <span class="text-danger">*</span></label>
+                                <input
+                                        required
+                                        type="number"
+                                        v-model="age"
+                                        class="form-control"
+                                        id="age"
+                                        name="age"
+                                        placeholder="Enter your age"
+                                >
+                            </div>
+                            <div class="form-group">
+                                <label for="dob">Date of birth <span class="text-danger">*</span></label>
+                                <input
+                                        required
+                                        type="text"
+                                        v-model="bod"
+                                        class="form-control"
+                                        id="bod"
+                                        name="bod"
+                                        placeholder="Enter your birthday"
+                                >
+                            </div>
+                            <div class="form-group">
+                                <label for="pob">Place of birth <span class="text-danger">*</span></label>
+                                <input
+                                        required
+                                        type="text"
+                                        v-model="pob"
+                                        class="form-control"
+                                        id="pob"
+                                        name="pob"
+                                        placeholder="Enter your birth place"
+                                >
+                            </div>
+                            <div class="form-group">
+                                <label for="address">Address <span class="text-danger">*</span></label>
+                                <textarea
+                                        rows="5"
+                                        class="form-control"
+                                        v-model="address"
+                                        id="address"
+                                        name="address"
+                                ></textarea>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary">Add Student</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <!-- End -->
+        <!-- Modal delete -->
+        <div class="modal fade" id="deletestu" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+             aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Delete Category</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Are you sure you want to delete?</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary" @click="daleteStudent">Delete</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- End -->
+        <!-- Modal edit -->
+        <div class="modal fade" id="editstu" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+             aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Edit Student</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <form method="POST">
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <label for="firstname">Firstname <span class="text-danger">*</span></label>
+                                <input
+                                        required
+                                        type="text"
+                                        class="form-control"
+                                        id="editfirstname"
+                                        name="editfirstname"
+                                >
+                            </div>
+                            <div class="form-group">
+                                <label for="lastname">Lastname <span class="text-danger">*</span></label>
+                                <input
+                                        required
+                                        type="text"
+                                        class="form-control"
+                                        id="editlastname"
+                                        name="editlastname"
+                                >
+                            </div>
+                            <div class="form-group">
+                                <label for="gender">Gender <span class="text-danger">*</span></label>
+                                <select
+                                        required
+                                        class="form-control"
+                                        id="editgender"
+                                        name="editgender"
+                                >
+                                    <option value="male">Male</option>
+                                    <option value="female">Female</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="age">Age <span class="text-danger">*</span></label>
+                                <input
+                                        required
+                                        type="number"
+                                        class="form-control"
+                                        id="editage"
+                                        name="editage"
+                                >
+                            </div>
+                            <div class="form-group">
+                                <label for="dob">Date of birth <span class="text-danger">*</span></label>
+                                <input
+                                        required
+                                        type="text"
+                                        class="form-control"
+                                        id="editbod"
+                                        name="editbod"
+                                >
+                            </div>
+                            <div class="form-group">
+                                <label for="pob">Place of birth <span class="text-danger">*</span></label>
+                                <input
+                                        required
+                                        type="text"
+                                        class="form-control"
+                                        id="editpob"
+                                        name="editpob"
+                                >
+                            </div>
+                            <div class="form-group">
+                                <label for="address">Address <span class="text-danger">*</span></label>
+                                <textarea
+                                        rows="5"
+                                        class="form-control"
+                                        id="editaddress"
+                                        name="editaddress"
+                                ></textarea>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary">Save changes</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <!-- End -->
+        <!-- /.row -->
+    </div><!-- /.container-fluid -->
+
+
+{% endblock %}
